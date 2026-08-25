@@ -81,8 +81,8 @@ plt.tight_layout(); plt.savefig("fig_teacher_request.png", dpi=200); plt.close()
 # ============ 3. COVERAGE ============
 fill = {c: sum(1 for r in rows if v(r,c) and v(r,c).lower()!="not stated") for c in varcols}
 top = sorted(fill.items(), key=lambda x: x[1], reverse=True)[:14]
-names = [short(c, 34) for c,_ in top]; tv = [x for _,x in top]
-fig, ax = plt.subplots(figsize=(9,6))
+names = [c.replace("Reason - ","").replace("Disallowed Reason - ","(disallow) ") for c,_ in top]; tv = [x for _,x in top]
+fig, ax = plt.subplots(figsize=(11,6))
 bars = ax.barh(names[::-1], tv[::-1], color="#1f3864")
 ax.bar_label(bars, labels=[f"{x} ({round(100*x/N)}%)" for x in tv[::-1]], padding=3, fontsize=8)
 ax.set_xlim(0, N*1.15)
@@ -92,10 +92,10 @@ plt.tight_layout(); plt.savefig("fig_coverage.png", dpi=200); plt.close()
 
 # ============ 4. DISALLOWED REASONS ============
 dis = [c for c in rows[0].keys() if c.startswith("Disallowed Reason")]
-freq = {short(c,30): sum(1 for r in rows if v(r,c).upper()=="Y") for c in dis}
+freq = {c.replace("Disallowed Reason - ","").replace("Dropping an application course after a student has been accepted and enrolled","Dropping an accepted application course"): sum(1 for r in rows if v(r,c).upper()=="Y") for c in dis}
 freq = {k:x for k,x in sorted(freq.items(), key=lambda i:i[1], reverse=True) if x>0}
 if freq:
-    fig, ax = plt.subplots(figsize=(8.5,5))
+    fig, ax = plt.subplots(figsize=(10,5))
     bars = ax.barh(list(freq.keys())[::-1], list(freq.values())[::-1], color="#c62828")
     ax.bar_label(bars, padding=3, fontsize=9)
     ax.set_xlim(0, max(freq.values())*1.12)
