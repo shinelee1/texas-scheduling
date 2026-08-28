@@ -105,3 +105,20 @@ if freq:
 
 print("\nWrote: fig_district_funnel.png, fig_teacher_request.png, fig_coverage.png" +
       (", fig_disallowed_reasons.png" if freq else ""))
+
+
+# ---- 5. ALLOWABLE (accepted) REASONS ----
+acc = [c for c in rows[0].keys() if c.startswith("Reason - ")]
+afreq = {c.replace("Reason - ",""): sum(1 for r in rows if v(r,c).upper()=="Y") for c in acc}
+afreq = {k:x for k,x in sorted(afreq.items(), key=lambda i:i[1], reverse=True) if x>0}
+if afreq:
+    fig, ax = plt.subplots(figsize=(10,6.5))
+    bars = ax.barh(list(afreq.keys())[::-1], list(afreq.values())[::-1], color="#2e7d32")
+    ax.bar_label(bars, padding=3, fontsize=9); ax.set_xlim(0, max(afreq.values())*1.12)
+    ax.set_title("Reasons schools accept for a schedule change", fontsize=13, pad=10)
+    ax.set_xlabel("Schools stating each"); ax.spines[['top','right']].set_visible(False)
+    plt.tight_layout(); plt.savefig("fig_allowable_reasons.png", dpi=200); plt.close()
+ 
+print("\nWrote: fig_district_funnel, fig_teacher_request, fig_coverage" +
+      (", fig_disallowed_reasons" if freq else "") + (", fig_allowable_reasons" if afreq else "") + " (.png)")
+ 
